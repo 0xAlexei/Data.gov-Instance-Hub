@@ -1,0 +1,15 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/> 
+SELECT * WHERE {
+    GRAPH <http://localhost:8890/datagov_agencies> {
+        <{{uri}}> dcterms:title ?name .
+        <{{uri}}> rdf:type ?type .
+        OPTIONAL { <{{uri}}> foaf:nick ?nick } .
+        OPTIONAL { <{{uri}}> foaf:homepage ?homepage } .
+        OPTIONAL { <{{uri}}> foaf:logo ?logo } .
+        OPTIONAL { <{{uri}}> skos:broader ?parent .
+            ?parent dcterms:title ?parent_name
+        } .
+    }
+}

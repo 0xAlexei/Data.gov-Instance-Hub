@@ -1,0 +1,7 @@
+PREFIX dcterms:<http://purl.org/dc/terms/>
+SELECT ?uri ?name
+WHERE{
+    ?uri  a foaf:Organization .
+    ?uri dcterms:title ?name .
+}
+ORDER BY ?name

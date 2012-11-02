@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LODSPeaKr Basic Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="alternate" type="application/rdf+xml" title="RDF/XML Version" href="{{lodspk.local.value}}.rdf" />
+    <link rel="alternate" type="text/turtle" title="Turtle Version" href="{{lodspk.local.value}}.ttl" />
+    <link rel="alternate" type="text/plain" title="N-Triples Version" href="{{lodspk.local.value}}.nt" />
+    <link rel="alternate" type="application/json" title="RDFJSON Version" href="{{lodspk.local.value}}.json" />
+    <link href="{{lodspk.home}}css/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      .wait{
+        background-image:url('{{lodspk.home}}img/wait.gif');
+        background-repeat:no-repeat;
+        padding-right:20px;
+        background-position: right;
+      }
+    </style>
+    <link href="{{lodspk.home}}css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="{{lodspk.home}}js/jquery.js"></script>
+    <script type="text/javascript" src="{{lodspk.home}}js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{lodspk.home}}js/bootstrap-typeahead.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('.typeahead').typeahead({
+            source: function (typeahead, query) {
+              $('.typeahead').addClass('wait');[]
+              return $.get('{{lodspk.home}}search/'+encodeURIComponent(query), { }, function (data) {
+                  $('.typeahead').removeClass('wait');[]
+                  return typeahead.process(data);
+              }, 'json');
+            },
+            onselect: function (obj) {
+              $('.typeahead').attr('disabled', true);
+              window.location = obj.uri;
+            }
+        });
+    });
+    </script>
+  </head>
+  <body>
+ <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="{{lodspk.home}}">LODSPeaKr</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="{{lodspk.home}}">Home</a></li>
+              <li><a href="{{lodspk.home}}classes">Classes</a></li>
+              <li><a href="{{lodspk.home}}namedGraphs">Named Graphs</a></li>
+            </ul>
+            <form class="navbar-search pull-left" action="">
+              <input type="text" data-provide="typeahead" class="typeahead search-query span2" placeholder="Search"/>
+            </form>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+    <h1>{{first.agency.name.value}}</h1>
+
+    <div style='margin-top: 40px'>
+    <table class='table table-striped'>
+    <thead>
+    <tr><th>Subject</th><th>Predicate</th><th>Object</th></tr>
+    </thead>
+
+ 
+    <tr>
+        <td><a href="{{uri}}">{{first.agency.name.value}}</a></td>
+        {% for row in models.agency %}
+            {%if !forloop.first%}
+                <tr>
+                <td></td>
+                <td></td>
+            {%else%}
+            <td><a href='{{lodspk.ns.rdf}}type'>rdf:type</a></td>
+            {%endif%}
+            
+            <td>{{row.type.value}}</td>
+        {%if !forloop.first%}</tr>{%endif%}
+        {%endfor%}
+    </tr>
+    
+      <tr>
+        <td></td>
+        <td><a href='{{lodspk.ns.foaf}}nick'>foaf:nick</a></td>
+        <td> {%if first.agency.nick %} {{first.agency.nick.value}} {%else%} NONE {%endif%} </td>
+    </tr>
+    
+    <tr> 
+        <td></td>
+        <td><a href='{{lodspk.ns.foaf}}homepage'>foaf:homepage</a></td>
+        <td> {%if first.agency.homepage %} <a href="{{first.agency.homepage.value}}">{{first.agency.homepage.value}}</a> {%else%} NONE {%endif%} </td>
+    </tr>
+ 
+    <tr> 
+        <td></td>
+        <td><a href='{{lodspk.ns.skos}}broader'>skos:broader</a></td>
+        <td> {%if first.agency.parent %} <a href="{{first.agency.parent.value}}">{{first.agency.parent_name.value}}</a> {%else%} NONE {%endif%} </td>
+    </tr>
+    
+    {%for row in models.children%}  
+    <tr>
+        <td></td>
+        <td>{%if forloop.first%}<a href="{{lodspk.ns.skos}}narrower">skos:narrower</a>{%endif%}</td>
+        <td><a href="{{row.child.value}}">{{row.name.value}}</a></td>
+    </tr>
+    {%endfor%}
+    
+    <tr> 
+        <td></td>
+        <td><a href='{{lodspk.ns.foaf}}logo'>foaf:logo</a></td>
+        <td> {%if first.agency.logo %} <image src="{{first.agency.logo.value}}"/>{%else%} NONE {%endif%} </td>
+    </tr>
+    
+    
+    <thead>
+    <tr><th>Subject</th><th>Predicate</th><th>Object</th></tr>
+    </thead>
+    </table>
+    </div>    
+    
+    <br/>
+  </body>
+</html>
+
